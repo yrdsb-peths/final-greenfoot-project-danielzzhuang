@@ -9,7 +9,8 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 public class Skill extends Actor
 {
-    
+    GreenfootImage[] selected = new GreenfootImage[6];
+    GreenfootImage[] deselected = new GreenfootImage[6];
     public int skillNum;
     public int id;
     /**
