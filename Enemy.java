@@ -49,7 +49,7 @@ public class Enemy extends Actor
     }
     
     public void show(){
-        setLocation(770, 450);
+        setLocation(730, 400);
     }
     
     public void hide(){
@@ -57,8 +57,8 @@ public class Enemy extends Actor
     }
     
     public void act(){
-        GreenfootImage image = getImage();
-        image.scale(150,150);
+        GreenfootImage image = new GreenfootImage("images/enemy.png");
+        image.scale(400, 400);
         setImage(image);
     }
 }
