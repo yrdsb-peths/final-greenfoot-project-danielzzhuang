@@ -8,6 +8,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class Enemy extends Actor
 {
+    public int size=300;
     public int enemyMaxHp=500;
     public int enemyMinHp=0;
     public int enemyHp=enemyMaxHp;
@@ -49,7 +50,7 @@ public class Enemy extends Actor
     }
     
     public void show(){
-        setLocation(770, 450);
+        setLocation(750, 410);
     }
     
     public void hide(){
@@ -58,7 +59,7 @@ public class Enemy extends Actor
     
     public void act(){
         GreenfootImage image = new GreenfootImage("images/enemy_images/enemySoul_Normal.png");
-        image.scale(150, 150);
+        image.scale(400, 400);
         setImage(image);
     }
 }
