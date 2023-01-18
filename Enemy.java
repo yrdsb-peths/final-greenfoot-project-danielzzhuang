@@ -57,7 +57,7 @@ public class Enemy extends Actor
     }
     
     public void act(){
-        GreenfootImage image = new GreenfootImage("images/enemy.png");
+        GreenfootImage image = new GreenfootImage("images/enemy_images/enemySoul_Normal.png");
         image.scale(150, 150);
         setImage(image);
     }
