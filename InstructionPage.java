@@ -9,7 +9,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 public class InstructionPage extends World
 {
     public boolean[] fixedD=new boolean[]{false, false};
-    public instruction_d[] iArr= new instruction_d[2];
+    public instruction_d[] iArr= new instruction_d[4];
     SimpleTimer fixTimer = new SimpleTimer();
     public GameDice[] diceArr=new GameDice[2];
     public CaveBackGround cBG;
@@ -25,11 +25,21 @@ public class InstructionPage extends World
         cBG = new CaveBackGround();
         addObject(cBG, 100, getHeight()/2);
         
-        iArr[0]= new instruction_d("start");
+        PlayerCharacter player = new PlayerCharacter();        
+        addObject(player, 160, 430);
+        
+        
+        iArr[0]= new instruction_d("start", 300);
         addObject(iArr[0], 700, 500);
         
-        iArr[1]= new instruction_d("skill");
+        iArr[1]= new instruction_d("skill", 300);
         addObject(iArr[1], 700, 200);
+        
+        iArr[2]= new instruction_d("0", 300);
+        addObject(iArr[2], 400, 500);
+        
+        iArr[3]= new instruction_d("1", 300);
+        addObject(iArr[3], 400, 200);
         
         for(int i=0; i<diceArr.length; i++){
             diceArr[i]= new GameDice(i+1, 1);

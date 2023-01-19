@@ -56,7 +56,7 @@ public class PlayerCharacter extends Actor
     }
     public void setPlayerHp(int change){
         int changeA=change;
-        if(changeA<0 && shield>1){
+        if(changeA<0 && shield>0){
             changeA*=Math.pow((0.8),shield);
             shield--;
         }

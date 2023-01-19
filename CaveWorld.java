@@ -23,11 +23,13 @@ public class CaveWorld extends World
     public HpBar[] barArr=new HpBar[2];
     public GameDice[] diceArr=new GameDice[dicePlayerNeed];
     public Skill[] skillArr= new Skill[3];
-    
+    public Shield_Instruction sI;
+    public Shield_Icon[] sIconArr=new Shield_Icon[4];
     public CaveBackGround cBG;
     public Label completedLabel;
     public Label endLabel;
     
+    public boolean showInstruction=false;
     public boolean gameStart=true;
     public boolean nextRound=false;
     public boolean nextFight=false;
@@ -38,6 +40,7 @@ public class CaveWorld extends World
     SimpleTimer fixTimer = new SimpleTimer();
     SimpleTimer cBGTimer = new SimpleTimer();
     SimpleTimer nextRoundTimer = new SimpleTimer();
+    SimpleTimer skillTimer = new SimpleTimer();
     /**
      * Constructor for objects of class MyWorld.
      * 
@@ -88,7 +91,13 @@ public class CaveWorld extends World
             iconArr[i]=new HpIcon(i);
             addObject(iconArr[i], 1000, 27);
         }
+        for(int i=0; i<sIconArr.length; i++){
+            sIconArr[i]=new Shield_Icon(i);
+            addObject(sIconArr[i], 1000, 270);
+        }
         
+        sI=new Shield_Instruction();
+        addObject(sI, 450, 1500);
     }
     //get random point for all dice
     public void setUp_diceAndPoint(int diceNeed){
@@ -113,12 +122,27 @@ public class CaveWorld extends World
         for(int i=0; i<dicePlayerHave; i++){
             diceArr[i].hide();
         }
+        for(int i=0; i<sIconArr.length; i++){
+            sIconArr[i].hide();
+        }
+        sI.hide();
     }
     public void showEverything(){
         setUp_HpAndHpBar();
         setUp_skill();
-        for(int i=0; i<dicePlayerHave; i++){
+        for(int i=0; i<diceArr.length; i++){
             diceArr[i].show();
+        }
+        for(int i=0; i<player.getShield(); i++){
+            sIconArr[i].show();
+        }
+        sI.show();
+    }
+    public void removeExShield(){
+        for(int j=0; j<sIconArr.length; j++){
+            if(j>player.getShield()){
+                sIconArr[j].hide();
+            }
         }
     }
     public void setUp_HpAndHpBar(){
@@ -128,20 +152,22 @@ public class CaveWorld extends World
             barArr[i].show();
         }
     }
-    public void dynamicHpAndHpBar(){
+    public void dynamicIconAndBar(){
         if(nextFight){
             showText("",40, 70);
+            showText("",860, 70);
+            for(int i=0; i<player.getShield(); i++){
+                sIconArr[i].hide();
+            }
         }
         else if(!nextFight){
             barArr[0].setLocation(player.getPlayerHp()-45, 27);
             showText("HP: "+String.valueOf(player.getPlayerHp()),40, 70);
-        }
-        if(nextFight){
-            showText("",860, 70);
-        }
-        else if(!nextFight){
             barArr[1].setLocation(945-(int)(enemyArr[enemyId].getEnemyHp()/3.2258), 27);
             showText("HP: "+String.valueOf(enemyArr[enemyId].getEnemyHp()),860, 70);
+            for(int i=0; i<player.getShield(); i++){
+                sIconArr[i].show();
+            }
         }
     }
     
@@ -180,13 +206,14 @@ public class CaveWorld extends World
             if(player.getShield()>0){
                 player.setShield(-1);
             }
+            removeExShield();
         }
         else if(skillNum==1){
             player.setPlayerHp((int)(point*player.getPlayerMaxHp()*0.02));
         }
         else if(skillNum==2){
             enemyArr[enemyId].setEnemyHp(-30);
-            if(player.getShield()<5){
+            if(player.getShield()<4){
                 player.setShield(1);
             }
         }
@@ -219,7 +246,7 @@ public class CaveWorld extends World
             moveToNextFight();
             if(!nextFight){
                 showEverything();
-                round=0;
+                round=1;
                 /*
                 if(fight%2==0){
                     player.setPlayerHp(player.getPlayerMaxHp());
@@ -231,12 +258,12 @@ public class CaveWorld extends World
             if(nextRoundTimer.millisElapsed() > 1500 && nextRound){
                 EnemyAtk(enemyId);
                 dicePlayerHave=dicePlayerNeed;
-                setUp_diceAndPoint(dicePlayerNeed);
+                setUp_diceAndPoint(dicePlayerHave);
                 round+=1;
                 nextRound=false;
             }
             else if(!nextRound){
-                dynamicHpAndHpBar();
+                dynamicIconAndBar();
                 fixedD();
                 if(dicePlayerHave<=0){
                     nextRound=true;
@@ -269,17 +296,39 @@ public class CaveWorld extends World
         }
         //test user dice and skill used
         if(fixTimer.millisElapsed() > 4000){
-            for(int i=0; i<dicePlayerNeed; i++){
+            for(int i=0; i<dicePlayerHave; i++){
                 for(int j=0; j<skillArr.length; j++){
                     if(fixedD[i] && fixedS[j]){
                         usedSkill(diceArr[i].getDicePoint(), j);
                         fixedS[j]=false;
                         fixedD[i]=false;
                         dicePlayerHave--;
+                        for(int k=0; k<dicePlayerHave; k++){
+                            diceArr[k].show();
+                        }
                         fixTimer.mark();
                     }
                 }
             }
         }
+        showText("shield: "+String.valueOf(player.getShield()), 350, 350);
+        if(skillTimer.millisElapsed() > 300){
+            if(Greenfoot.isKeyDown("b")){
+                showInstruction=!showInstruction;
+                skillTimer.mark();
+            }
+        }
+        for(int j=0; j<sIconArr.length; j++){
+            if(j>player.getShield()){
+                sIconArr[j].hide();
+            }
+        }
+        if(showInstruction){
+            sI.show();
+        }
+        else{
+            sI.hide();
+        }
+        
     }
 }
