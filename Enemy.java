@@ -9,12 +9,13 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 public class Enemy extends Actor
 {
     public int size=300;
-    public int enemyMaxHp=20;
+    public int enemyMaxHp=200;
     public int enemyMinHp=0;
-    public int enemyHp=enemyMaxHp;
+    public int enemyHp;
     public int id;
-    public static String state="_Normal";
-    
+    public int e;
+    public String state="_Normal";
+    SimpleTimer normalTimer= new SimpleTimer();
     /**
      * Act - do whatever the Enemy wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
@@ -25,6 +26,15 @@ public class Enemy extends Actor
      */
     public Enemy(int id){
         this.id=id;
+        if(id==3){
+            size=500;
+            enemyMaxHp=500;
+        }
+        else if(id==2){
+            size=400;
+            enemyMaxHp=300;
+        }
+        enemyHp=enemyMaxHp;
     }
     public int getEnemyHp(){
         return enemyHp;
@@ -52,13 +62,16 @@ public class Enemy extends Actor
         }
         return true;
     }
-    public static void states(String states){
+    public void states(String states){
         state=states;
         //"_Hits", "_Normal"
     }
     
     public void show(){
-        setLocation(770+id*40, 410);
+        if(id==3){
+            e=100;
+        }
+        setLocation(770+id*40+e, 410);
     }
     
     public void hide(){
@@ -66,18 +79,26 @@ public class Enemy extends Actor
     }
     
     public void moveForward(){
-        setLocation(getX()-2, getY());
-    }
-    
-    public void bossSetter(){
-        if(id==4){
-            size=500;
-            enemyMaxHp=500;
+        if(id<2){
+            setLocation(getX()-2, getY());
+        }
+        else if(id==2){
+            setLocation(getX()-3, getY());
+        }
+        else if(id==3){
+            setLocation(getX()-3, getY());
         }
     }
+    
     public void act(){
+        if(normalTimer.millisElapsed() > 400){
+            state="_Normal";
+            normalTimer.mark();
+        }
+        
         GreenfootImage image = new GreenfootImage("images/enemy_images/enemy"+id+state+".png");
-        image.scale(300, 300);
+        image.scale(size, size);
         setImage(image);
+        
     }
 }

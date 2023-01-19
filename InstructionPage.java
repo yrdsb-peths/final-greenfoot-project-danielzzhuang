@@ -21,7 +21,7 @@ public class InstructionPage extends World
     public InstructionPage()
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(900, 600, 1, true); 
+        super(900, 600, 1, false); 
         cBG = new CaveBackGround();
         addObject(cBG, 100, getHeight()/2);
         
@@ -39,7 +39,7 @@ public class InstructionPage extends World
     }
     public void fixedD(){
         for(int i=0; i<diceArr.length; i++){
-            if( ((int)Math.sqrt(Math.pow(diceArr[i].getX()-(iArr[i].getX()+80), 2)+Math.pow(diceArr[i].getY()-(iArr[i].getY()+10), 2)))<20 ){
+            if( ((int)Math.sqrt(Math.pow(diceArr[i].getX()-(iArr[i].getX()+80), 2)+Math.pow(diceArr[i].getY()-(iArr[i].getY()), 2)))<10 ){
                 //dice_1.setLocation(545, 145);//545, 145
                 diceArr[i].setLocation(100, 1200);
                 fixedD[i]=true;

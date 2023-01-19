@@ -12,19 +12,21 @@ public class CaveWorld extends World
     public int EnemyAtkCoolDown=2;
     public int dicePlayerHave=dicePlayerNeed;
     public int round=1;
-    public int maxFight=4;
+    public int maxFight=3;
     public int fight=0;
     public int enemyId=0;
+    public int flagFight=0;
     
     public PlayerCharacter player;
-    public Enemy[] enemyArr=new Enemy[maxFight];
+    public Enemy[] enemyArr=new Enemy[4];
     public HpIcon[] iconArr=new HpIcon[2];
     public HpBar[] barArr=new HpBar[2];
     public GameDice[] diceArr=new GameDice[dicePlayerNeed];
     public Skill[] skillArr= new Skill[3];
     
     public CaveBackGround cBG;
-    
+    public Label completedLabel;
+    public Label endLabel;
     
     public boolean gameStart=true;
     public boolean nextRound=false;
@@ -53,22 +55,30 @@ public class CaveWorld extends World
         }
         
         
-        
-        /*
-        atkC1_text = new Label("atk1: cause point*30 damage", 30);
-        addObject (atkC1_text, getWidth()/2, 1000);
-        */
         for(int i=0; i<dicePlayerNeed; i++){
             diceArr[i]= new GameDice(i+1, 1);
             addObject(diceArr[i], 100, 900);
         }
         
-        for(int i=0; i<enemyArr.length; i++){
+        for(int i=0; i<2; i++){
             enemyArr[i] = new Enemy(i);
             addObject(enemyArr[i], 770+i*250, 410);
         }
+        
+        enemyArr[2] = new Enemy(2);
+        addObject(enemyArr[2], 770+2*250+50, 400);
+        
+        enemyArr[3] = new Enemy(3);
+        addObject(enemyArr[3], 770+3*250+170, 350);
+        
         player = new PlayerCharacter();        
         addObject(player, 170, 900);
+        
+        completedLabel= new Label("Stage Completed!", 100);
+        addObject(completedLabel, 450, 1300);
+        
+        endLabel= new Label("Game Over", 100);
+        addObject(endLabel, 450, 1300);
         
         for(int i=0; i<barArr.length; i++){
             barArr[i]=new HpBar(i);
@@ -119,59 +129,53 @@ public class CaveWorld extends World
         }
     }
     public void dynamicHpAndHpBar(){
-        barArr[0].setLocation(player.getPlayerHp()-45, 27);
-        if(!nextFight){
-            showText("HP: "+String.valueOf(player.getPlayerHp()),40, 70);
-        }
-        else{
+        if(nextFight){
             showText("",40, 70);
         }
-        
-        if(enemyId<4){
+        else if(!nextFight){
+            barArr[0].setLocation(player.getPlayerHp()-45, 27);
+            showText("HP: "+String.valueOf(player.getPlayerHp()),40, 70);
+        }
+        if(nextFight){
+            showText("",860, 70);
+        }
+        else if(!nextFight){
             barArr[1].setLocation(945-(int)(enemyArr[enemyId].getEnemyHp()/3.2258), 27);
-            if(!nextFight){
-                showText("HP: "+String.valueOf(enemyArr[enemyId].getEnemyHp()),860, 70);
-            }
-            else{
-                showText("",860, 70);
-            }
-            
+            showText("HP: "+String.valueOf(enemyArr[enemyId].getEnemyHp()),860, 70);
         }
-        
     }
-    public void heal(int point){
-        player.setPlayerHp((int)(player.getPlayerMaxHp()*0.02*point));
-    }
-    public void EnemyAtk(int enemyId){
-        if(enemyArr[0].getEnemyHp()<(int)(500/4*2) && EnemyAtkCoolDown<=0)
-        {
-            EnemyAtkCoolDown=3;
-            enemyArr[0].setEnemyHp(+100);
-            player.setPlayerHp(-(int)((enemyArr[0].getEnemyMaxHp()/14)*(player.getPlayerMaxHp()/100)*1.5));
-        }
-        else if(enemyArr[0].getEnemyHp()>(int)(500/4*2)||EnemyAtkCoolDown>0){
-            player.setPlayerHp(-(player.getPlayerMaxHp()/17+(int)(Math.random()*10)));
-            EnemyAtkCoolDown--;
-        }
-        showText(String.valueOf(EnemyAtkCoolDown), 450, 300);
-    }
+    
     //backgorund move
     public void moveToNextFight(){
-        if(cBG.getX()>900-round*200){
+        if(cBG.getX()>=(900-fight*200)){
             cBG.moveForward();
             for(int i=0; i<enemyArr.length; i++){
                 enemyArr[i].moveForward();
             }
-            player.animateRolling();
+            player.setRolling(true);
         }
-        else if(cBG.getX()<=900-round*200){
+        else if(cBG.getX()<(900-fight*200)){
             nextFight=false;
+            player.setRolling(false);
         }
     }
+    public void EnemyAtk(int enemyId){
+        if(enemyId<3){
+            player.setPlayerHp(-(enemyArr[enemyId].getEnemyMaxHp()/14+(int)(Math.random()*10)));
+        }
+        else if(enemyArr[3].getEnemyHp()<(int)(500/4*2) && EnemyAtkCoolDown<=0)
+        {
+            EnemyAtkCoolDown=3;
+            enemyArr[3].setEnemyHp(+100);
+            player.setPlayerHp(-(int)((enemyArr[3].getEnemyMaxHp()/14)*(player.getPlayerMaxHp()/100)*1.5));
+        }
+        else if(enemyArr[3].getEnemyHp()>(int)(500/4*2)||EnemyAtkCoolDown>0){
+            player.setPlayerHp(-(player.getPlayerMaxHp()/17+(int)(Math.random()*10)));
+            EnemyAtkCoolDown--;
+        } 
+    }
     public void usedSkill(int point, int skillNum){
-        
         if(skillNum==0){
-            showText("skill1", 350, 360);
             enemyArr[enemyId].setEnemyHp(-(point*13+player.getShield()*15));
             if(player.getShield()>0){
                 player.setShield(-1);
@@ -181,14 +185,16 @@ public class CaveWorld extends World
             player.setPlayerHp((int)(point*player.getPlayerMaxHp()*0.02));
         }
         else if(skillNum==2){
-            enemyArr[enemyId].setEnemyHp(-10);
-            player.setShield(1);
+            enemyArr[enemyId].setEnemyHp(-30);
+            if(player.getShield()<5){
+                player.setShield(1);
+            }
         }
     }
     public void fixedD(){
         for(int i=0; i<dicePlayerNeed; i++){
             for(int j=0; j<skillArr.length; j++){
-                if( ((int)Math.sqrt(Math.pow(diceArr[i].getX()-(skillArr[j].getX()+100), 2)+Math.pow(diceArr[i].getY()-(skillArr[j].getY()+5), 2)))<15 ){
+                if( ((int)Math.sqrt(Math.pow(diceArr[i].getX()-(skillArr[j].getX()+100), 2)+Math.pow(diceArr[i].getY()-(skillArr[j].getY()+5), 2)))<15 && ((int)Math.sqrt(Math.pow(diceArr[i].getX()-(skillArr[j].getX()+100), 2)+Math.pow(diceArr[i].getY()-(skillArr[j].getY()+5), 2)))> -15){
                     diceArr[i].hide();
                     fixedS[j]=true;
                     fixedD[i]=true;
@@ -196,18 +202,29 @@ public class CaveWorld extends World
             }
         }
     }
+    
     public void act(){
+        
         if(nextFight){
             hideEverything();
+            if(flagFight==1){
+                fight++;
+                enemyId=fight;
+                flagFight=0;
+            }
+            if(fight>=4){
+                completedLabel.setLocation(450, 300);
+                Greenfoot.stop();
+            }
             moveToNextFight();
             if(!nextFight){
                 showEverything();
-                fight++;
-                enemyId=fight;
                 round=0;
+                /*
                 if(fight%2==0){
-                player.setPlayerHp(player.getPlayerMaxHp());
+                    player.setPlayerHp(player.getPlayerMaxHp());
                 }
+                */
             }
         }
         else if(!nextFight){
@@ -223,14 +240,16 @@ public class CaveWorld extends World
                 fixedD();
                 if(dicePlayerHave<=0){
                     nextRound=true;
-                    showText("next round", 350, 330);
                 }
                 if(!player.playerAlive()){
-                    showText("Game Over", 450, 300);
+                    endLabel.setLocation(450, 300);
+                    hideEverything();
                     Greenfoot.stop();
                 }
                 else if(!enemyArr[enemyId].enemyAlive()){
                     nextFight=true;
+                    nextRound=false;
+                    flagFight=1;
                     enemyArr[enemyId].hide();
                 }
                 if(!nextFight){
@@ -253,21 +272,14 @@ public class CaveWorld extends World
             for(int i=0; i<dicePlayerNeed; i++){
                 for(int j=0; j<skillArr.length; j++){
                     if(fixedD[i] && fixedS[j]){
-                        showText("fixed", 350, 300);
                         usedSkill(diceArr[i].getDicePoint(), j);
-                        fixTimer.mark();
                         fixedS[j]=false;
                         fixedD[i]=false;
-                        enemyArr[enemyId].states("_Normal");
                         dicePlayerHave--;
+                        fixTimer.mark();
                     }
                 }
             }
         }
-        
-        
-        
-        
-        
     }
 }

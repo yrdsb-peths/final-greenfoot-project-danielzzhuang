@@ -13,6 +13,8 @@ public class PlayerCharacter extends Actor
     public static int playerMinHp=0;
     public int playerHp=playerMaxHp;
     public int shield=0;
+    public boolean roll=false;
+    
     
     GreenfootImage[] idleRolling = new GreenfootImage[5];
     SimpleTimer animationTimer_rolling = new SimpleTimer();
@@ -42,6 +44,9 @@ public class PlayerCharacter extends Actor
     }
     public void setShield(int num){
         shield+=num;
+    }
+    public void setRolling(boolean nextFight){
+        roll=nextFight;
     }
     public int getPlayerHp(){
         return playerHp;
@@ -83,10 +88,13 @@ public class PlayerCharacter extends Actor
     
     public void act()
     {
-        
-        GreenfootImage image = new GreenfootImage("images/player_images/player0.png");
-        image.scale(70, 70);
-        setImage(image);
-        
+        if(roll){
+            animateRolling();
+        }
+        else{
+            GreenfootImage image = new GreenfootImage("images/player_images/player0.png");
+            image.scale(70, 70);
+            setImage(image);
+        }
     }
 }

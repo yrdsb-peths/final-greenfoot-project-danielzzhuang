@@ -30,7 +30,7 @@ public class GameDice extends Actor
     }
     public void hide()
     {
-        setLocation(-50, 560);
+        setLocation(400, 1660);
     }
     public void act()
     {
