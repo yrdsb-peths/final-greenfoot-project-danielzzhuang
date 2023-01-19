@@ -28,6 +28,7 @@ public class CaveWorld extends World
     public CaveBackGround cBG;
     public Label completedLabel;
     public Label endLabel;
+    public Shield_effect sE;
     
     public boolean showInstruction=false;
     public boolean gameStart=true;
@@ -77,6 +78,9 @@ public class CaveWorld extends World
         player = new PlayerCharacter();        
         addObject(player, 170, 900);
         
+        sE=new Shield_effect();
+        addObject(sE, 450, 1200);
+        
         completedLabel= new Label("Stage Completed!", 100);
         addObject(completedLabel, 450, 1300);
         
@@ -111,6 +115,11 @@ public class CaveWorld extends World
             skillArr[i].show();
         }
     }
+    public void ShieldE(){
+        if(player.getShield()>0){
+            sE.show();
+        }
+    }
     public void hideEverything(){
         for(int i=0; i<skillArr.length; i++){
             skillArr[i].hide();
@@ -126,6 +135,7 @@ public class CaveWorld extends World
             sIconArr[i].hide();
         }
         sI.hide();
+        sE.hide();
     }
     public void showEverything(){
         setUp_HpAndHpBar();
@@ -137,6 +147,7 @@ public class CaveWorld extends World
             sIconArr[i].show();
         }
         sI.show();
+        ShieldE();
     }
     public void removeExShield(){
         for(int j=0; j<sIconArr.length; j++){
@@ -247,22 +258,22 @@ public class CaveWorld extends World
             if(!nextFight){
                 showEverything();
                 round=1;
-                /*
                 if(fight%2==0){
                     player.setPlayerHp(player.getPlayerMaxHp());
                 }
-                */
             }
         }
         else if(!nextFight){
             if(nextRoundTimer.millisElapsed() > 1500 && nextRound){
                 EnemyAtk(enemyId);
+                removeExShield();
                 dicePlayerHave=dicePlayerNeed;
                 setUp_diceAndPoint(dicePlayerHave);
                 round+=1;
                 nextRound=false;
             }
             else if(!nextRound){
+                ShieldE();
                 dynamicIconAndBar();
                 fixedD();
                 if(dicePlayerHave<=0){
@@ -303,6 +314,7 @@ public class CaveWorld extends World
                         fixedS[j]=false;
                         fixedD[i]=false;
                         dicePlayerHave--;
+                        removeExShield();
                         for(int k=0; k<dicePlayerHave; k++){
                             diceArr[k].show();
                         }
@@ -311,16 +323,10 @@ public class CaveWorld extends World
                 }
             }
         }
-        showText("shield: "+String.valueOf(player.getShield()), 350, 350);
         if(skillTimer.millisElapsed() > 300){
             if(Greenfoot.isKeyDown("b")){
                 showInstruction=!showInstruction;
                 skillTimer.mark();
-            }
-        }
-        for(int j=0; j<sIconArr.length; j++){
-            if(j>player.getShield()){
-                sIconArr[j].hide();
             }
         }
         if(showInstruction){

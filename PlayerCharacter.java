@@ -43,7 +43,7 @@ public class PlayerCharacter extends Actor
         return shield;
     }
     public void setShield(int num){
-        shield+=num;
+        shield=shield+num;
     }
     public void setRolling(boolean nextFight){
         roll=nextFight;
@@ -83,7 +83,7 @@ public class PlayerCharacter extends Actor
     }
     
     public void hide(){
-        setLocation(900, 450);
+        setLocation(900, 1450);
     }
     
     public void act()
