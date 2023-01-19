@@ -8,7 +8,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class TitleWorld extends World
 {
-
+    public TitleBg tBG;
     /**
      * Constructor for objects of class TitleWorld.
      * 
@@ -17,6 +17,9 @@ public class TitleWorld extends World
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(900, 600, 1); 
+        
+        tBG = new TitleBg();
+        addObject(tBG, getWidth()/2, 300);
         
         Label titleLabel = new Label("Crystal Cave", 100);
         addObject(titleLabel, getWidth()/2, 100);
@@ -29,5 +32,6 @@ public class TitleWorld extends World
             InstructionPage ip = new InstructionPage();
             Greenfoot.setWorld(ip);
         }
+        
     }
 }

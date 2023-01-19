@@ -8,9 +8,8 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class Enemy extends Actor
 {
-    public boolean boss=false;
     public int size=300;
-    public int enemyMaxHp=500;
+    public int enemyMaxHp=20;
     public int enemyMinHp=0;
     public int enemyHp=enemyMaxHp;
     public int id;
@@ -47,10 +46,6 @@ public class Enemy extends Actor
             enemyHp=enemyHp+change;
         }
     }
-    public void startBossFight(boolean ifFight){
-        boss=ifFight;
-        size=500;
-    }
     public boolean enemyAlive(){
         if(enemyHp==0){
             return false;
@@ -63,16 +58,26 @@ public class Enemy extends Actor
     }
     
     public void show(){
-        setLocation(750, 410);
+        setLocation(770+id*40, 410);
     }
     
     public void hide(){
-        setLocation(900, 450);
+        setLocation(900, 1450);
     }
     
+    public void moveForward(){
+        setLocation(getX()-2, getY());
+    }
+    
+    public void bossSetter(){
+        if(id==4){
+            size=500;
+            enemyMaxHp=500;
+        }
+    }
     public void act(){
         GreenfootImage image = new GreenfootImage("images/enemy_images/enemy"+id+state+".png");
-        image.scale(400, 400);
+        image.scale(300, 300);
         setImage(image);
     }
 }

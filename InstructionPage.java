@@ -39,7 +39,7 @@ public class InstructionPage extends World
     }
     public void fixedD(){
         for(int i=0; i<diceArr.length; i++){
-            if( ((int)Math.sqrt(Math.pow(diceArr[i].getX()-(iArr[i].getX()+90), 2)+Math.pow(diceArr[i].getY()-(iArr[i].getY()+20), 2)))<20 ){
+            if( ((int)Math.sqrt(Math.pow(diceArr[i].getX()-(iArr[i].getX()+80), 2)+Math.pow(diceArr[i].getY()-(iArr[i].getY()+10), 2)))<20 ){
                 //dice_1.setLocation(545, 145);//545, 145
                 diceArr[i].setLocation(100, 1200);
                 fixedD[i]=true;
