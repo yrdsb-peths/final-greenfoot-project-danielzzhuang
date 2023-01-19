@@ -8,7 +8,12 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class InstructionPage extends World
 {
-
+    public boolean[] fixedD=new boolean[]{false, false};
+    public instruction_d[] iArr= new instruction_d[2];
+    SimpleTimer fixTimer = new SimpleTimer();
+    public GameDice[] diceArr=new GameDice[2];
+    public CaveBackGround cBG;
+    public String[] iLoopArr={"start", "skill"};
     /**
      * Constructor for objects of class InstructionPage.
      * 
@@ -16,12 +21,45 @@ public class InstructionPage extends World
     public InstructionPage()
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(600, 400, 1); 
+        super(900, 600, 1, true); 
+        cBG = new CaveBackGround();
+        addObject(cBG, 100, getHeight()/2);
+        
+        iArr[0]= new instruction_d("start");
+        addObject(iArr[0], 700, 500);
+        
+        iArr[1]= new instruction_d("skill");
+        addObject(iArr[1], 700, 200);
+        
+        for(int i=0; i<diceArr.length; i++){
+            diceArr[i]= new GameDice(i+1, 1);
+        }
+        addObject(diceArr[0], 550, 550);
+        addObject(diceArr[1], 550, 150);
+    }
+    public void fixedD(){
+        for(int i=0; i<diceArr.length; i++){
+            if( ((int)Math.sqrt(Math.pow(diceArr[i].getX()-(iArr[i].getX()+90), 2)+Math.pow(diceArr[i].getY()-(iArr[i].getY()+20), 2)))<20 ){
+                //dice_1.setLocation(545, 145);//545, 145
+                diceArr[i].setLocation(100, 1200);
+                fixedD[i]=true;
+                
+            }
+        }
     }
     public void act(){
-        if(Greenfoot.isKeyDown("space")){
-            CaveWorld cw = new CaveWorld();
-            Greenfoot.setWorld(cw);
+        fixedD();
+        if(fixTimer.millisElapsed() > 2000){
+            for(int i=0; i<diceArr.length; i++){
+                if(fixedD[0]){
+                    fixTimer.mark();
+                    CaveWorld cw = new CaveWorld();
+                    Greenfoot.setWorld(cw);
+                }
+                else if(fixedD[1]){
+                    fixedD[1]=false;
+                }
+            }
         }
     }
 }

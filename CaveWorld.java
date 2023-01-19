@@ -12,6 +12,8 @@ public class CaveWorld extends World
     public int EnemyAtkCoolDown=2;
     public int dicePlayerHave=dicePlayerNeed;
     public int round=1;
+    public int maxFight=7;
+    public int fight=0;
     public int enemyId;
     
     public PlayerCharacter player;
@@ -45,7 +47,7 @@ public class CaveWorld extends World
     public CaveWorld()
     {
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(900, 600, 1, false);
+        super(900, 600, 1, true);
         cBG = new CaveBackGround();
         addObject(cBG, 900, getHeight()/2);
         
@@ -69,8 +71,6 @@ public class CaveWorld extends World
             enemyArr[i] = new Enemy(i);
             addObject(enemyArr[i], 770, 900);
         }
-        
-        
         player = new PlayerCharacter();        
         addObject(player, 170, 900);
         
@@ -82,8 +82,6 @@ public class CaveWorld extends World
             iconArr[i]=new HpIcon(i);
             addObject(iconArr[i], 1000, 27);
         }
-        
-        
         
     }
     public void hideAllDice(){
@@ -152,6 +150,20 @@ public class CaveWorld extends World
         }
         showText(String.valueOf(EnemyAtkCoolDown), 450, 300);
     }
+    public void bossfight(int enemyId){
+        if(enemyId==0){
+            enemyArr[enemyId].startBossFight(true);
+        }
+        else{
+            enemyArr[enemyId].startBossFight(false);
+        }
+    }
+    //backgorund move
+    public void moveToNextFight(){
+        if(cBG.getX()>900-round*20){
+            cBG.moveForward();
+        }
+    }
     public void fixedD(){
         for(int i=0; i<dicePlayerNeed; i++){
             if( ((int)Math.sqrt(Math.pow(diceArr[i].getX()-545, 2)+Math.pow(diceArr[i].getY()-145, 2)))<15 ){
@@ -163,9 +175,7 @@ public class CaveWorld extends World
     }
     public void act(){
         enemyId=0;
-        if(cBG.getX()>900-round*20){
-            cBG.moveForward();
-        }
+        
         if(nextRoundTimer.millisElapsed() > 1500 && nextRound){
             EnemyAtk(enemyId);
             dicePlayerHave=dicePlayerNeed;
@@ -174,6 +184,7 @@ public class CaveWorld extends World
             nextRound=false;
         }
         else if(!nextRound){
+            bossfight(enemyId);
             dynamicHpAndHpBar(enemyId);
             fixedD();
             
@@ -194,12 +205,15 @@ public class CaveWorld extends World
                 gameStart=false;
             }
         }
+        
+        //test user dice and skill used
         if(fixTimer.millisElapsed() > 5000){
             for(int i=0; i<dicePlayerNeed; i++){
                 if(fixedD[i]){
                     enemyArr[enemyId].setEnemyHp(skillArr[0].usedSkill(diceArr[i].getDicePoint()));
                     fixTimer.mark();
                     fixedD[i]=false;
+                    enemyArr[enemyId].states("_Normal");
                     dicePlayerHave--;
                 }
             }

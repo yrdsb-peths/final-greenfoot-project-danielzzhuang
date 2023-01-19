@@ -8,11 +8,14 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class Enemy extends Actor
 {
+    public boolean boss=false;
     public int size=300;
     public int enemyMaxHp=500;
     public int enemyMinHp=0;
     public int enemyHp=enemyMaxHp;
     public int id;
+    public static String state="_Normal";
+    
     /**
      * Act - do whatever the Enemy wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
@@ -38,15 +41,25 @@ public class Enemy extends Actor
             enemyHp=enemyMinHp;
         }
         else{
+            if(change<0){
+                states("_Hits");
+            }
             enemyHp=enemyHp+change;
         }
     }
-    
+    public void startBossFight(boolean ifFight){
+        boss=ifFight;
+        size=500;
+    }
     public boolean enemyAlive(){
         if(enemyHp==0){
             return false;
         }
         return true;
+    }
+    public static void states(String states){
+        state=states;
+        //"_Hits", "_Normal"
     }
     
     public void show(){
@@ -58,7 +71,7 @@ public class Enemy extends Actor
     }
     
     public void act(){
-        GreenfootImage image = new GreenfootImage("images/enemy_images/enemySoul_Normal.png");
+        GreenfootImage image = new GreenfootImage("images/enemy_images/enemy"+id+state+".png");
         image.scale(400, 400);
         setImage(image);
     }
